@@ -1,0 +1,23 @@
+{
+  "name": "v2e-remotion",
+  "private": true,
+  "description": "Intro card + thumbnail compositions for video-to-elearning",
+  "scripts": {
+    "studio": "remotion studio src/index.ts --public-dir=../assets/brand",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.380",
+    "@remotion/google-fonts": "4.0.380",
+    "@remotion/zod-types": "4.0.380",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "remotion": "4.0.380",
+    "zod": "3.22.3"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
+    "typescript": "5.5.4"
+  }
+}

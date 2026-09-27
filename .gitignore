@@ -1,0 +1,7 @@
+node_modules/
+remotion/node_modules
+remotion/out/
+state/*.json
+.DS_Store
+*.part
+*.part.mp4

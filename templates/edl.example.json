@@ -1,0 +1,71 @@
+{
+  "course": "Bootcamp Vibe Code chuyên nghiệp",
+  "fps": 25,
+  "width": 1920,
+  "height": 1080,
+  "crf": 20,
+  "introSeconds": 4,
+  "brand": {
+    "buoi": "BUỔI 3",
+    "ink": "#0f2547",
+    "orange": "#F1591F",
+    "blue": "#2563EB",
+    "introBackground": "intro-bg.png",
+    "thumbBackground": "thumb-bg-default.png",
+    "thumbKicker": "BỘ VIDEO E-LEARNING"
+  },
+  "rules": {
+    "silenceSpeedFrom": 2.5,
+    "silenceCutFrom": 25,
+    "speed": 2,
+    "keepOfLongSilence": 2,
+    "padBefore": 0.15,
+    "padAfter": 0.25
+  },
+  "parts": {
+    "A": "PHẦN A · Claude chuyên nghiệp",
+    "B": "PHẦN B · OpenClaw",
+    "D": "PHẦN BONUS"
+  },
+  "lessons": [
+    {
+      "code": "A1",
+      "part": "A",
+      "title": "Khai mạc & định hướng Buổi 3",
+      "start": "00:02:25.320",
+      "end": "00:06:08.100",
+      "bullets": ["3 chủ đề buổi cuối", "Nhấn mạnh thực hành", "Chi phí Claude & tiết kiệm token"],
+      "thumbTitle": "Định hướng **Buổi 3**",
+      "thumbVisual": "a roadmap board with 3 columns: Claude Skills, OpenClaw agent, n8n automation, each with a glowing icon",
+      "thumbSecondary": "a small card listing 'Skills · MCP · Claude Code' with check marks",
+      "thumbBadge": "the Claude orange starburst logo",
+      "drops": [],
+      "noSpeedup": [],
+      "mute": []
+    },
+    {
+      "code": "A4",
+      "part": "A",
+      "title": "Connector & MCP: biến phần mềm thành cánh tay nối dài",
+      "start": "00:25:06.400",
+      "end": "00:40:04.900",
+      "drops": [["00:33:54.000", "00:34:24.500"]],
+      "noSpeedup": [["00:29:10", "00:30:40"]],
+      "mute": [["00:31:02.000", "00:31:04.500"]]
+    },
+    {
+      "code": "D1",
+      "part": "D",
+      "bonus": true,
+      "title": "(Bonus) Hệ thống phễu/Landing bán hàng — deploy Railway",
+      "lessonLabel": "Bonus",
+      "start": "02:50:15",
+      "end": "03:11:05"
+    }
+  ],
+  "mistakes": [
+    { "id": "M1", "start": "00:31:47.200", "end": "00:31:51.000", "drop": true, "note": "Bối rối ChatGPT đổi giao diện" },
+    { "id": "M11", "start": "03:58:00", "end": "04:04:00", "drop": false, "note": "Lỗi demo → dạy debug, GIỮ" }
+  ],
+  "drops": []
+}
