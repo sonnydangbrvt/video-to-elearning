@@ -102,7 +102,7 @@
     }
   ],
   "drops": [],
-  "preset": "slow",
+  "preset": "medium",
   "cutFade": 0.25,
   "thumbMode": "screenshot",
   "thumbScale": 1.5,
@@ -110,5 +110,14 @@
     "cut": "sfx/cut-woosh.wav",
     "intro": "sfx/intro-woosh.wav",
     "volume": 0.45
+  },
+  "frame": {
+    "enabled": true,
+    "background": "frame/wallpaper-purple.jpg",
+    "autoCrop": true
+  },
+  "transition": {
+    "type": "fade",
+    "duration": 0.5
   }
 }

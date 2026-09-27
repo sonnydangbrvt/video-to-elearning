@@ -97,8 +97,9 @@ Send the sample. **STOP and wait for approval** (unless the user explicitly pre-
 ## 8. Batch render
 
 `v2e render <dir> --all` in background (resumable; finished lessons are skipped). Also exports `out/review-mistakes/` (`-BO` = dropped, `-GIU` = kept).
-Encoding defaults (small but clean for screen recordings): H.264 `crf 23`, `preset slow`, AAC 128k, faststart. Override with `edl.crf` / `edl.preset`.
-Cut transitions: 0.25 s dip + audio fade at every dropped segment (`edl.cutFade`), SFX from `edl.sfx.cut` (whoosh), intro SFX `edl.sfx.intro`, volume `edl.sfx.volume` (0.45). Pick SFX from the user's library if they have one (prefer a soft whoosh ~1 s).
+Encoding defaults (fast + clean for screen recordings): H.264 `crf 23`, `preset medium`, AAC 128k, faststart. Override with `edl.crf` / `edl.preset`.
+Background: black letterbox is replaced by a macOS wallpaper (`edl.frame.background`, from `assets/frame/`); auto-crops the recording's own black borders first. NO window chrome (kept simple for speed).
+Cut transitions: at every dropped segment the outgoing scene's audio fades down, video crossfades (`edl.transition`), and a whoosh SFX plays (`edl.sfx.cut`) so viewers feel the previous scene ended. Every cut is logged to `out/cut-log.md` / `.csv` with the lesson number, timestamp-in-video, removed source range, and reason — so the user can point to "video 12, cut at 07:23".
 
 ## 9. QA + delivery — GATE G5
 
