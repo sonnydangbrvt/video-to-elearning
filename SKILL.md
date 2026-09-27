@@ -126,7 +126,9 @@ Cut transitions: at every dropped segment the outgoing scene's audio fades down,
 - Measure loudness with `ebur128=peak=true:framelog=quiet` (fast). Never measure long audio with `loudnorm` (it resamples to 192 kHz — minutes per hour of audio) and never let ebur128 print per-frame logs (overflows buffers).
 - Whisper timestamps are ±1–2 s: decide cuts from audio silences, not from Whisper.
 - This ffmpeg build has no `drawtext`; label images in chat, or with Remotion.
-- In zsh, `$var:foo` triggers modifiers — use `${var}` inside filter strings.
+- Zoom recordings often show a BLACK screen while the presenter talks before (re)sharing the screen ("các bạn thấy màn hình chưa?"). Before finalizing `edl.json`, run `blackdetect` on the first ~60 s of each lesson; if the start is black, move the lesson start to the first cue after the screen appears.
+- QA "freeze ≥60 s" warnings on slides/static screens with speech are normal — only investigate black frames, loudness, A/V sync, duration mismatches.
+- In zsh, `$var:foo` triggers modifiers — use `${var}` inside filter strings. A glob with no match (`rm out/*.part.mp4`) aborts the WHOLE command — use `find … -delete`.
 
 ## Hard rules (repeat — do not violate)
 
