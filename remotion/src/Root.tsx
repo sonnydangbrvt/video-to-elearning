@@ -2,6 +2,7 @@ import React from "react";
 import { Composition, Still } from "remotion";
 import { LessonIntro, lessonIntroDefaults, lessonIntroSchema, type LessonIntroProps } from "./LessonIntro";
 import { LessonThumbnail, lessonThumbnailDefaults, lessonThumbnailSchema } from "./LessonThumbnail";
+import { Scene, sceneDefaults, sceneSchema } from "./Scene";
 import { WindowFrame, windowFrameDefaults, windowFrameSchema } from "./WindowFrame";
 
 export const RemotionRoot: React.FC = () => (
@@ -23,6 +24,7 @@ export const RemotionRoot: React.FC = () => (
       })}
     />
     <Still id="WindowFrame" component={WindowFrame} schema={windowFrameSchema} defaultProps={windowFrameDefaults} width={1920} height={1080} />
+    <Still id="Scene" component={Scene} schema={sceneSchema} defaultProps={sceneDefaults} width={1920} height={1080} />
     <Still id="LessonThumbnail" component={LessonThumbnail} schema={lessonThumbnailSchema} defaultProps={lessonThumbnailDefaults} width={1280} height={720} />
   </>
 );

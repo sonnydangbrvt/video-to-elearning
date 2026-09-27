@@ -105,6 +105,29 @@ Cut transitions: at every dropped segment the outgoing scene's audio fades down,
 
 `v2e qa <dir>` → fix ❌ lessons. `v2e export <dir>` → `out/curriculum.json/.csv`, `out/captions/*.srt`. Report: lesson count, original → final duration, total size, issues to review, output folders.
 
+## Lessons learned (from real production — follow them)
+
+**Speed first.** The user values fast production. Skip anything slow that is not clearly needed. Preview layout/look decisions with STILL IMAGES (Remotion `Scene` still, `ffmpeg -frames:v 1`) before rendering any video.
+
+**Layout = "A + C" (default, approved):**
+- Auto-detect and crop the recording's own black borders per lesson (`detectCrop`, union of 10 samples → never cuts content).
+- Content ≈16:9 → fills the 1920×1080 frame (no border, sharpest text).
+- Content 4:3 → contained on a macOS wallpaper (`edl.frame.background`) instead of black bars.
+- ❌ Do NOT build window-chrome mockups (Safari frame) or floating-window-with-shadow layouts unless the user asks: slower, smaller text, and rejected by the user.
+
+**Cuts must feel intentional, never abrupt.** Every dropped segment = a transition: outgoing audio fades down (~0.8 s), video crossfades (`edl.transition`), a whoosh SFX plays. Cut starts snap slightly EARLIER into a pause, ends slightly LATER. Every transition is logged in `out/cut-log.md/.csv` (video number, time in video, removed source range, reason) so the user can say "video 12, cut at 07:23".
+
+**Intro:** 4 s Remotion card + shared intro music (`assets/music/intro-music.m4a`, −18 LUFS, fades) + intro whoosh, crossfading into the lesson. Same music for every video unless the user provides another (`edl.introMusic`).
+
+**Order the user wants:** PLAN → thumbnails (approve) → 1 sample video (approve) → batch render unattended (they often go to sleep — run to completion, then QA + export).
+
+**Technical pitfalls (already fixed — do not reintroduce):**
+- Never feed an infinite input (`-loop 1` image) to a filter graph unless the overlay uses `shortest=1` with the video as the finite stream; otherwise ffmpeg never stops.
+- Measure loudness with `ebur128=peak=true:framelog=quiet` (fast). Never measure long audio with `loudnorm` (it resamples to 192 kHz — minutes per hour of audio) and never let ebur128 print per-frame logs (overflows buffers).
+- Whisper timestamps are ±1–2 s: decide cuts from audio silences, not from Whisper.
+- This ffmpeg build has no `drawtext`; label images in chat, or with Remotion.
+- In zsh, `$var:foo` triggers modifiers — use `${var}` inside filter strings.
+
 ## Hard rules (repeat — do not violate)
 
 - NEVER modify/delete anything in `input/` or the original video.
