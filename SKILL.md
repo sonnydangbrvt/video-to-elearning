@@ -117,7 +117,7 @@ Cut transitions: at every dropped segment the outgoing scene's audio fades down,
 
 **Cuts must feel intentional, never abrupt.** Every dropped segment = a transition: outgoing audio fades down (~0.8 s), video crossfades (`edl.transition`), a whoosh SFX plays. Cut starts snap slightly EARLIER into a pause, ends slightly LATER. Every transition is logged in `out/cut-log.md/.csv` (video number, time in video, removed source range, reason) so the user can say "video 12, cut at 07:23".
 
-**Intro:** 4 s Remotion card + shared intro music (`assets/music/intro-music.m4a`, −18 LUFS, fades) + intro whoosh, crossfading into the lesson. Same music for every video unless the user provides another (`edl.introMusic`).
+**Intro = the APPROVED THUMBNAIL of that lesson** (`out/thumb/NN-CODE.png`), shown 4 s with fade in/out + shared intro music (`assets/music/intro-music.m4a`, −18 LUFS, fades) + intro whoosh, then concatenated to the lesson WITHOUT re-encoding (`-c copy`). Never use a separate/old intro template: the user approved the thumbnails, the video must open with exactly those (a stale Antigravity intro template once slipped through — never again). Render thumbnails BEFORE the batch. Same music for every video unless the user provides another (`edl.introMusic`).
 
 **Order the user wants:** PLAN → thumbnails (approve) → 1 sample video (approve) → batch render unattended (they often go to sleep — run to completion, then QA + export).
 
@@ -127,6 +127,9 @@ Cut transitions: at every dropped segment the outgoing scene's audio fades down,
 - Whisper timestamps are ±1–2 s: decide cuts from audio silences, not from Whisper.
 - This ffmpeg build has no `drawtext`; label images in chat, or with Remotion.
 - Zoom recordings often show a BLACK screen while the presenter talks before (re)sharing the screen ("các bạn thấy màn hình chưa?"). Before finalizing `edl.json`, run `blackdetect` on the first ~60 s of each lesson; if the start is black, move the lesson start to the first cue after the screen appears.
+- Black screen can be much longer than a few seconds (presenter talks for minutes before sharing the screen) and full-frame `blackdetect` MISSES it when wallpaper bars surround the video. Check brightness of the CENTER region (`crop=iw*0.6:ih*0.6,signalstats` YAVG < 8 for ≥4 s) on the source for each lesson start, and move the start to the first cue after the screen appears.
+- To change only intros/order, use `v2e render --only X --force --reassemble` (reuses `out/edited/`, <1 s per lesson) instead of re-rendering bodies.
+- Self-check of the sample MUST include looking at the opening frames: they must equal the approved thumbnail.
 - QA "freeze ≥60 s" warnings on slides/static screens with speech are normal — only investigate black frames, loudness, A/V sync, duration mismatches.
 - In zsh, `$var:foo` triggers modifiers — use `${var}` inside filter strings. A glob with no match (`rm out/*.part.mp4`) aborts the WHOLE command — use `find … -delete`.
 
