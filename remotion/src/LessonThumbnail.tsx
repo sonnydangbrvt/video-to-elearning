@@ -19,6 +19,7 @@ export const lessonThumbnailSchema = z.object({
   background: z.string(),
   hasCustomBg: z.boolean(),
   logo: z.string(),
+  screenshot: z.string(),
   ink: zColor(),
   orange: zColor(),
   blue: zColor(),
@@ -34,18 +35,51 @@ export const lessonThumbnailDefaults: LessonThumbnailProps = {
   background: "thumb-bg-default.png",
   hasCustomBg: false,
   logo: "",
+  screenshot: "",
   ink: "#0f2547",
   orange: "#F1591F",
   blue: "#2563EB",
 };
 
-export const LessonThumbnail: React.FC<LessonThumbnailProps> = ({ buoi, part, lessonCode, title, kicker, background, logo, ink, orange, blue }) => {
+/** Nền phong cách Coachio vẽ bằng code + ảnh chụp màn hình thật của bài trong khung thiết bị nghiêng. */
+const ScreenshotStage: React.FC<{ screenshot: string; ink: string; orange: string; blue: string }> = ({ screenshot, ink, orange, blue }) => (
+  <AbsoluteFill>
+    <AbsoluteFill style={{ background: "#F4F5F7" }} />
+    <AbsoluteFill style={{ background: orange, clipPath: "polygon(66% 0, 100% 0, 100% 58%)" }} />
+    <AbsoluteFill style={{ background: blue, clipPath: "polygon(50% 100%, 100% 34%, 100% 100%)" }} />
+    {/* chấm 2 hàng góc trên phải */}
+    <div style={{ position: "absolute", right: 40, top: 26, display: "grid", gridTemplateColumns: "repeat(10, 8px)", gap: 14 }}>
+      {Array.from({ length: 20 }).map((_, i) => <div key={i} style={{ width: 8, height: 8, borderRadius: 4, background: ink }} />)}
+    </div>
+    {/* pixel góc dưới trái */}
+    <div style={{ position: "absolute", left: 18, bottom: 150, display: "grid", gridTemplateColumns: "repeat(6, 16px)", gap: 6, opacity: 0.12 }}>
+      {Array.from({ length: 30 }).map((_, i) => <div key={i} style={{ width: 16, height: 16, background: (i * 7) % 3 ? blue : "transparent" }} />)}
+    </div>
+    {/* bậc pixel xanh đậm */}
+    <div style={{ position: "absolute", left: 560, top: 60, width: 34, height: 34, background: blue }} />
+    <div style={{ position: "absolute", left: 594, top: 26, width: 34, height: 34, background: blue }} />
+    <div style={{ position: "absolute", left: 540, top: 94, width: 20, height: 20, background: ink }} />
+    {/* khung thiết bị */}
+    <div style={{ position: "absolute", left: 600, top: 118, width: 640, perspective: 1600 }}>
+      <div style={{ transform: "rotateY(-14deg) rotateZ(2deg)", transformOrigin: "left center", background: "#fff", padding: 12, borderRadius: 26, boxShadow: `0 30px 60px rgba(15,37,71,0.35), 0 0 0 3px ${ink}` }}>
+        <div style={{ background: "#0f172a", borderRadius: 16, overflow: "hidden" }}>
+          <div style={{ height: 26, display: "flex", alignItems: "center", gap: 7, paddingLeft: 12 }}>
+            {["#ff5f57", "#febc2e", "#28c840"].map((c) => <div key={c} style={{ width: 10, height: 10, borderRadius: 5, background: c }} />)}
+          </div>
+          <Img src={staticFile(screenshot)} style={{ display: "block", width: "100%", aspectRatio: "1512 / 880", objectFit: "cover", objectPosition: "center 60%" }} />
+        </div>
+      </div>
+    </div>
+  </AbsoluteFill>
+);
+
+export const LessonThumbnail: React.FC<LessonThumbnailProps> = ({ buoi, part, lessonCode, title, kicker, background, logo, screenshot, ink, orange, blue }) => {
   const len = plain(title).length;
   const size = len <= 18 ? 76 : len <= 30 ? 62 : len <= 44 ? 52 : 44;
   const pillText = [buoi, part].filter(Boolean).join(" · ");
   return (
     <AbsoluteFill style={{ backgroundColor: "#f4f5f7", fontFamily }}>
-      <Img src={staticFile(background)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      {screenshot ? <ScreenshotStage screenshot={screenshot} ink={ink} orange={orange} blue={blue} /> : <Img src={staticFile(background)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
       {/* làm dịu nửa trái để chữ luôn đọc được, kể cả khi ảnh AI lấn sang trái */}
       <div style={{ position: "absolute", left: 0, right: 0, top: "22%", bottom: 0, background: "linear-gradient(90deg, rgba(244,245,247,0.9) 0%, rgba(244,245,247,0.7) 34%, rgba(244,245,247,0) 44%)" }} />
       {logo && <Img src={staticFile(logo)} style={{ position: "absolute", left: 34, top: 26, height: 70 }} />}

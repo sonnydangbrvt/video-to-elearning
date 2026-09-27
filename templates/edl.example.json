@@ -3,7 +3,7 @@
   "fps": 25,
   "width": 1920,
   "height": 1080,
-  "crf": 20,
+  "crf": 23,
   "introSeconds": 4,
   "brand": {
     "buoi": "BUỔI 3",
@@ -34,14 +34,19 @@
       "title": "Khai mạc & định hướng Buổi 3",
       "start": "00:02:25.320",
       "end": "00:06:08.100",
-      "bullets": ["3 chủ đề buổi cuối", "Nhấn mạnh thực hành", "Chi phí Claude & tiết kiệm token"],
+      "bullets": [
+        "3 chủ đề buổi cuối",
+        "Nhấn mạnh thực hành",
+        "Chi phí Claude & tiết kiệm token"
+      ],
       "thumbTitle": "Định hướng **Buổi 3**",
       "thumbVisual": "a roadmap board with 3 columns: Claude Skills, OpenClaw agent, n8n automation, each with a glowing icon",
       "thumbSecondary": "a small card listing 'Skills · MCP · Claude Code' with check marks",
       "thumbBadge": "the Claude orange starburst logo",
       "drops": [],
       "noSpeedup": [],
-      "mute": []
+      "mute": [],
+      "thumbFrameAt": 0
     },
     {
       "code": "A4",
@@ -49,9 +54,25 @@
       "title": "Connector & MCP: biến phần mềm thành cánh tay nối dài",
       "start": "00:25:06.400",
       "end": "00:40:04.900",
-      "drops": [["00:33:54.000", "00:34:24.500"]],
-      "noSpeedup": [["00:29:10", "00:30:40"]],
-      "mute": [["00:31:02.000", "00:31:04.500"]]
+      "drops": [
+        [
+          "00:33:54.000",
+          "00:34:24.500"
+        ]
+      ],
+      "noSpeedup": [
+        [
+          "00:29:10",
+          "00:30:40"
+        ]
+      ],
+      "mute": [
+        [
+          "00:31:02.000",
+          "00:31:04.500"
+        ]
+      ],
+      "thumbFrameAt": 0
     },
     {
       "code": "D1",
@@ -60,12 +81,34 @@
       "title": "(Bonus) Hệ thống phễu/Landing bán hàng — deploy Railway",
       "lessonLabel": "Bonus",
       "start": "02:50:15",
-      "end": "03:11:05"
+      "end": "03:11:05",
+      "thumbFrameAt": 0
     }
   ],
   "mistakes": [
-    { "id": "M1", "start": "00:31:47.200", "end": "00:31:51.000", "drop": true, "note": "Bối rối ChatGPT đổi giao diện" },
-    { "id": "M11", "start": "03:58:00", "end": "04:04:00", "drop": false, "note": "Lỗi demo → dạy debug, GIỮ" }
+    {
+      "id": "M1",
+      "start": "00:31:47.200",
+      "end": "00:31:51.000",
+      "drop": true,
+      "note": "Bối rối ChatGPT đổi giao diện"
+    },
+    {
+      "id": "M11",
+      "start": "03:58:00",
+      "end": "04:04:00",
+      "drop": false,
+      "note": "Lỗi demo → dạy debug, GIỮ"
+    }
   ],
-  "drops": []
+  "drops": [],
+  "preset": "slow",
+  "cutFade": 0.25,
+  "thumbMode": "screenshot",
+  "thumbScale": 1.5,
+  "sfx": {
+    "cut": "sfx/cut-woosh.wav",
+    "intro": "sfx/intro-woosh.wav",
+    "volume": 0.45
+  }
 }

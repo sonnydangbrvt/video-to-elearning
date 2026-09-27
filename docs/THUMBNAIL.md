@@ -5,7 +5,18 @@
 **Công thức:** ảnh nền 16:9 (nửa trái trống, mockup công cụ ở nửa phải) + lớp chữ Remotion (pill Buổi·Phần, tiêu đề có 1 từ khoá tô màu, chip mã bài, nhãn "BỘ VIDEO E-LEARNING").
 Chữ luôn do Remotion đặt → đúng dấu tiếng Việt, cả bộ đồng bộ, đổi tên bài chỉ cần render lại (1 giây/ảnh).
 
-## Hai phương án
+## Bước bắt buộc lần đầu: bộ nhận diện + 1 banner thử (Gate G2)
+
+Brand mới → hỏi **logo** (PNG nền trong), **3 màu** (ink/chữ, accent 1 cho pill, accent 2 cho từ khoá & chip mã bài), **kicker** ("BỘ VIDEO E-LEARNING"),
+lưu `brand/logo.png` + `edl.json › brand` → render **1 banner** (`v2e thumbs <dir> --only <MÃ>`) → chờ duyệt → `touch brand/APPROVED` → mới render cả bộ.
+
+## Ba phương án
+
+### 0. Ảnh chụp thật trong khung thiết bị (mặc định, `thumbMode: "screenshot"`)
+Nền vẽ bằng code theo brand (khối cam góc trên phải, khối xanh chéo, chấm, bậc pixel) + **khung hình thật của bài** trong khung thiết bị nghiêng + logo + tiêu đề.
+Chọn khung: trích 4 ứng viên/bài (20/40/60/80 %), ghép lưới, chọn ảnh trực quan nhất (mô hình 3D, màn hình kết quả, app chạy) → `thumbFrameAt` (giây). Tránh slide nhiều chữ, màn hình trống, trang đăng nhập.
+Ảnh trích tự động vào `brand/thumb-shots/<MÃ>.jpg` (`--force` để trích lại sau khi đổi `thumbFrameAt`).
+
 
 | | A. Nhanh | B. Nền riêng từng bài |
 |---|---|---|
