@@ -105,7 +105,11 @@ Cut transitions: at every dropped segment the outgoing scene's audio fades down,
 
 `v2e qa <dir>` → fix ❌ lessons. `v2e export <dir>` → `out/curriculum.json/.csv`, `out/captions/*.srt`. Report: lesson count, original → final duration, total size, issues to review, output folders.
 
-## 10. Publish to YouTube (optional — only when the user asks)
+## 10. Post-production: publish to a video host (only when the user asks)
+
+Hosts are pluggable: each host writes `out/<host>/state.json` = `{ videos: { <CODE>: { id, url, title, privacy, index } }, playlistId? }` and `lib/deliver.mjs › HOSTS` maps it to `{ provider, id, url, embedUrl, thumbnailUrl, privacy }`. Today: **YouTube**. To add Bunny Stream / Vimeo / S3 later: write an uploader that produces the same state.json + add one entry in `HOSTS`. Never change the delivery schema for a new host.
+
+### 10a. YouTube
 
 `v2e youtube <dir> auth | plan | upload | links` — YouTube Data API v3 with the USER's own OAuth client (no extra npm deps).
 1. One-time setup is done BY THE USER (never create accounts or enter credentials for them): Google Cloud project → enable "YouTube Data API v3" → OAuth consent screen (External, add their Gmail as test user) → OAuth client ID type **Desktop app** → save JSON as `~/.config/video-to-elearning/youtube-client.json`. Then `v2e youtube <dir> auth` opens the browser; the user signs in and clicks Allow. Token is stored locally (chmod 600).
@@ -113,6 +117,17 @@ Cut transitions: at every dropped segment the outgoing scene's audio fades down,
 3. `v2e youtube <dir> upload --test --yes` uploads ONE lesson first and verifies YouTube kept the requested privacy. ⚠️ Projects that have NOT passed the YouTube API audit get every upload **locked private forever** (cannot be changed in Studio, no appeal — must re-upload). The tool stops if that happens; point the user to https://support.google.com/youtube/contact/yt_api_form . Alternative without audit: upload via YouTube Studio or a verified service (e.g. Upload-Post, if connected).
 4. After the test is confirmed: `v2e youtube <dir> upload --yes` (resumable; done lessons skipped) + thumbnails (needs phone-verified channel) + playlist in lesson order. Captions are NOT uploaded by default (captions.insert costs 400 units each).
 5. Report `out/youtube/links.md` / `links.csv` (index, title, URL, privacy, playlist link).
+6. Setup can be done WITH the user in the browser pane if they are signed in to Google Cloud and ask you to: create a SEPARATE project (never reuse a production project), enable the API, Google Auth Platform (External, their Gmail as test user), OAuth client "Desktop app". Ask before ticking the "I agree to Google API Services User Data Policy" box. The browser pane cannot save downloads to disk: read client_id/secret from the dialog text and write `youtube-client.json` (chmod 600) yourself. The user must click Allow on the consent screen themselves.
+7. Verified in practice (2026-09): a brand-new, un-audited project uploaded as **unlisted** successfully and stayed unlisted after processing — but ALWAYS keep the `--test` step and re-check `status.privacyStatus` after processing finishes before uploading the rest.
+
+## 11. Delivery package for the e-learning website — ALWAYS the last step after publishing
+
+The final result of post-production is ONE machine-readable file an agent can push to the LMS: `out/delivery/course.json` (schema `v2e.delivery/1`), plus `course.md` (human) and `lessons.csv` (spreadsheet import).
+1. `v2e deliver <dir> --prepare` → `work/lesson-text/<CODE>.txt` (transcript of the KEPT parts only).
+2. For every lesson write `work/lesson-content/<CODE>.json`: `summary` (2–4 sentences), `objectives` (3, verb-first), `checklist` (4–7 concrete items in video order), `keyTerms`, `tools`, `level`, `practice`. Only facts from the transcript; fix misheard terms; no sales talk. For >10 lessons split across parallel sub-agents (≈9 lessons each).
+3. `v2e deliver <dir>` → merges edl + real durations (ffprobe) + host state (URL, embed URL, thumbnail URL, privacy, playlist) + lesson content + local file paths. It lists anything missing (`missing.video`, `missing.content`) — fix before reporting.
+4. Report to the user: the table (order · title · duration · link) + paths of `course.json` / `course.md` / `lessons.csv`.
+
 Quota (2026): videos.insert has its own bucket of 100 uploads/day; thumbnails.set 50, playlistItems.insert 50, playlists.insert 50 from the 10,000 units/day pool.
 
 ## Lessons learned (from real production — follow them)

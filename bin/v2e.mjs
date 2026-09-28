@@ -12,6 +12,7 @@ import { render } from "../lib/render.mjs";
 import { thumbs } from "../lib/thumbs.mjs";
 import { transcribe } from "../lib/transcribe.mjs";
 import { youtube } from "../lib/youtube.mjs";
+import { deliver } from "../lib/deliver.mjs";
 import { STATE, parseArgs, project, readJSON } from "../lib/util.mjs";
 
 const HELP = `
@@ -29,6 +30,7 @@ v2e — Video dài → bộ bài giảng E-learning
   qa <dir> [--only A1]                        Kiểm tra chất lượng file final
   export <dir>                                curriculum.json/.csv + phụ đề .srt từng bài
   youtube <dir> auth|plan|upload|links        Đăng lên YouTube (plan → duyệt → upload --test --yes → upload --yes)
+  deliver <dir> [--prepare] [--host youtube]  Gói bàn giao cho website e-learning (course.json/md, lessons.csv)
   status <dir>                                Dự án đang ở bước nào, bước tiếp theo là gì
 `;
 
@@ -59,7 +61,7 @@ function status(args) {
   console.log(next ? `\n ▶ Bước tiếp: ${next}\n` : "\n 🎉 Hoàn tất.\n");
 }
 
-const CMDS = { doctor, init, prepare, transcribe, edl: edlCheck, "clean-audio": cleanAudio, render, thumbs, qa, export: exportAll, youtube, status };
+const CMDS = { doctor, init, prepare, transcribe, edl: edlCheck, "clean-audio": cleanAudio, render, thumbs, qa, export: exportAll, youtube, deliver, status };
 
 const [cmd, ...rest] = process.argv.slice(2);
 if (!cmd || cmd === "help" || cmd === "--help" || !CMDS[cmd]) {
