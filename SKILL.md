@@ -134,6 +134,7 @@ Before EVERY upload batch (any host, even a single test video) show the user and
 - Grouping (Mux has no folders): `meta.creator_id` = owner/tenant (e.g. `coachio`, partner id) · `meta.external_id` = `<group>:<CODE>` (group = course slug, `edl.mux.group`) · `passthrough` = `{g, cat, code, i}` where `cat` = part label. `v2e mux <dir> catalog` lists ALL assets in the environment grouped owner → group → category → `out/mux/catalog.md`.
 - `v2e mux <dir> upload --test --yes` (1 lesson) → user checks the dashboard → `v2e mux <dir> upload --yes`. Each asset gets `meta.title`, `meta.external_id = v2e:<CODE>`, optional `meta.creator_id` (tenant), and `passthrough` JSON {course, code, index} — use these for multi-tenant lookups.
 - Output `out/mux/state.json` + `links.md/csv`; `v2e deliver <dir> --host mux` makes Mux the primary video in `course.json` (both hosts are always listed under `lessons[].hosts`).
+- Mux **Free plan = max 10 assets** (upload fails with "Free plan is limited to 10 assets"). Check the plan BEFORE a batch >10 and tell the user to upgrade in Dashboard → Billing (never do billing yourself). `deliver` falls back to another host (e.g. YouTube) for lessons missing on the primary host.
 - Mux has no custom-thumbnail upload: the LMS should use our approved PNG (`files.thumbnail`); `thumbnailUrl` is Mux's auto frame.
 
 ## 11. Delivery package for the e-learning website — ALWAYS the last step after publishing
