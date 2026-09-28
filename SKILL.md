@@ -118,7 +118,8 @@ Hosts are pluggable: each host writes `out/<host>/state.json` = `{ videos: { <CO
 4. After the test is confirmed: `v2e youtube <dir> upload --yes` (resumable; done lessons skipped) + thumbnails (needs phone-verified channel) + playlist in lesson order. Captions are NOT uploaded by default (captions.insert costs 400 units each).
 5. Report `out/youtube/links.md` / `links.csv` (index, title, URL, privacy, playlist link).
 6. Setup can be done WITH the user in the browser pane if they are signed in to Google Cloud and ask you to: create a SEPARATE project (never reuse a production project), enable the API, Google Auth Platform (External, their Gmail as test user), OAuth client "Desktop app". Ask before ticking the "I agree to Google API Services User Data Policy" box. The browser pane cannot save downloads to disk: read client_id/secret from the dialog text and write `youtube-client.json` (chmod 600) yourself. The user must click Allow on the consent screen themselves.
-7. Verified in practice (2026-09): a brand-new, un-audited project uploaded as **unlisted** successfully and stayed unlisted after processing — but ALWAYS keep the `--test` step and re-check `status.privacyStatus` after processing finishes before uploading the rest.
+7. Channel limits seen in practice (not API quota): **~20 uploads per channel per 24 h** (`uploadLimitExceeded`) and a **thumbnail rate limit (~10 in a burst, HTTP 429)**. For >20 lessons plan two days; re-run `upload --yes` next day (done lessons skipped) and `v2e youtube <dir> thumbs` later to set missing thumbnails. Never loop-retry on these errors.
+8. Verified in practice (2026-09): a brand-new, un-audited project uploaded as **unlisted** successfully and stayed unlisted after processing — but ALWAYS keep the `--test` step and re-check `status.privacyStatus` after processing finishes before uploading the rest.
 
 ## 11. Delivery package for the e-learning website — ALWAYS the last step after publishing
 
