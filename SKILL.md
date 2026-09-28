@@ -121,6 +121,15 @@ Hosts are pluggable: each host writes `out/<host>/state.json` = `{ videos: { <CO
 7. Channel limits seen in practice (not API quota): **~20 uploads per channel per 24 h** (`uploadLimitExceeded`) and a **thumbnail rate limit (~10 in a burst, HTTP 429)**. For >20 lessons plan two days. When the user wants it finished unattended, copy `scripts/youtube-autoretry.sh` into `<dir>/out/youtube/`, start it detached (`nohup … & disown`) and keep the Mac awake with `caffeinate -i -w <pid>`: it retries once per hour (upload → thumbs → links → deliver), stops when all lessons have video + thumbnail or after 36 h, and logs to `out/youtube/autoretry.log`. Never tight-loop on these errors.
 8. Verified in practice (2026-09): a brand-new, un-audited project uploaded as **unlisted** successfully and stayed unlisted after processing — but ALWAYS keep the `--test` step and re-check `status.privacyStatus` after processing finishes before uploading the rest.
 
+### 10b. Mux (recommended host for paid courses / white-label)
+
+- **Batch upload from disk = `v2e mux`** (Direct Upload API). The official Mux MCP server (`https://mcp.mux.com`, OAuth) has NO filesystem access — use it for management in chat (list/inspect assets, playback policies, analytics, signing keys), not for uploading local files.
+- Setup (user does it; never type their secrets into web fields): Mux Dashboard → Settings → Access Tokens → new token, environment = the one for courses, **Mux Video Read + Write** → save `{"tokenId","tokenSecret"}` to `~/.config/video-to-elearning/mux.json` (chmod 600) or env `MUX_TOKEN_ID/MUX_TOKEN_SECRET` → `v2e mux <dir> check`.
+- Ask the user for the playback policy: **signed** (default for paid courses — the LMS backend must mint JWTs with a Mux Signing Key) or **public**.
+- `v2e mux <dir> upload --test --yes` (1 lesson) → user checks the dashboard → `v2e mux <dir> upload --yes`. Each asset gets `meta.title`, `meta.external_id = v2e:<CODE>`, optional `meta.creator_id` (tenant), and `passthrough` JSON {course, code, index} — use these for multi-tenant lookups.
+- Output `out/mux/state.json` + `links.md/csv`; `v2e deliver <dir> --host mux` makes Mux the primary video in `course.json` (both hosts are always listed under `lessons[].hosts`).
+- Mux has no custom-thumbnail upload: the LMS should use our approved PNG (`files.thumbnail`); `thumbnailUrl` is Mux's auto frame.
+
 ## 11. Delivery package for the e-learning website — ALWAYS the last step after publishing
 
 The final result of post-production is ONE machine-readable file an agent can push to the LMS: `out/delivery/course.json` (schema `v2e.delivery/1`), plus `course.md` (human) and `lessons.csv` (spreadsheet import).
