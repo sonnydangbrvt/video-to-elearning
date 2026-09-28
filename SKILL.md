@@ -105,6 +105,16 @@ Cut transitions: at every dropped segment the outgoing scene's audio fades down,
 
 `v2e qa <dir>` → fix ❌ lessons. `v2e export <dir>` → `out/curriculum.json/.csv`, `out/captions/*.srt`. Report: lesson count, original → final duration, total size, issues to review, output folders.
 
+## 10. Publish to YouTube (optional — only when the user asks)
+
+`v2e youtube <dir> auth | plan | upload | links` — YouTube Data API v3 with the USER's own OAuth client (no extra npm deps).
+1. One-time setup is done BY THE USER (never create accounts or enter credentials for them): Google Cloud project → enable "YouTube Data API v3" → OAuth consent screen (External, add their Gmail as test user) → OAuth client ID type **Desktop app** → save JSON as `~/.config/video-to-elearning/youtube-client.json`. Then `v2e youtube <dir> auth` opens the browser; the user signs in and clicks Allow. Token is stored locally (chmod 600).
+2. `v2e youtube <dir> plan --privacy unlisted|public|private` → `out/youtube/plan.md` (titles ≤100 chars, description with bullets, tags, playlist, quota estimate). **Show it and WAIT for explicit confirmation** — uploading publishes to the user's channel.
+3. `v2e youtube <dir> upload --test --yes` uploads ONE lesson first and verifies YouTube kept the requested privacy. ⚠️ Projects that have NOT passed the YouTube API audit get every upload **locked private forever** (cannot be changed in Studio, no appeal — must re-upload). The tool stops if that happens; point the user to https://support.google.com/youtube/contact/yt_api_form . Alternative without audit: upload via YouTube Studio or a verified service (e.g. Upload-Post, if connected).
+4. After the test is confirmed: `v2e youtube <dir> upload --yes` (resumable; done lessons skipped) + thumbnails (needs phone-verified channel) + playlist in lesson order. Captions are NOT uploaded by default (captions.insert costs 400 units each).
+5. Report `out/youtube/links.md` / `links.csv` (index, title, URL, privacy, playlist link).
+Quota (2026): videos.insert has its own bucket of 100 uploads/day; thumbnails.set 50, playlistItems.insert 50, playlists.insert 50 from the 10,000 units/day pool.
+
 ## Lessons learned (from real production — follow them)
 
 **Speed first.** The user values fast production. Skip anything slow that is not clearly needed. Preview layout/look decisions with STILL IMAGES (Remotion `Scene` still, `ffmpeg -frames:v 1`) before rendering any video.
