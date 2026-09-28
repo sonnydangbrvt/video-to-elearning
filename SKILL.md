@@ -109,6 +109,11 @@ Cut transitions: at every dropped segment the outgoing scene's audio fades down,
 
 Hosts are pluggable: each host writes `out/<host>/state.json` = `{ videos: { <CODE>: { id, url, title, privacy, index } }, playlistId? }` and `lib/deliver.mjs › HOSTS` maps it to `{ provider, id, url, embedUrl, thumbnailUrl, privacy }`. Today: **YouTube**. To add Bunny Stream / Vimeo / S3 later: write an uploader that produces the same state.json + add one entry in `HOSTS`. Never change the delivery schema for a new host.
 
+### ⛔ Batch confirmation gate (ALL hosts — never skip)
+
+Before EVERY upload batch (any host, even a single test video) show the user and get an explicit yes on:
+**playback/privacy policy** (Mux: `signed` | `public`; YouTube: `public` | `unlisted` | `private`) — there is NO default, the tool refuses without an explicit choice · **owner/tenant** · **group (course)** · **course name** · **the exact list of videos**. Run the command WITHOUT `--yes` first: it prints this confirmation table; paste it to the user; only after they approve run again with `--yes`. A previous approval does not carry over to a new batch.
+
 ### 10a. YouTube
 
 `v2e youtube <dir> auth | plan | upload | links` — YouTube Data API v3 with the USER's own OAuth client (no extra npm deps).
@@ -125,7 +130,8 @@ Hosts are pluggable: each host writes `out/<host>/state.json` = `{ videos: { <CO
 
 - **Batch upload from disk = `v2e mux`** (Direct Upload API). The official Mux MCP server (`https://mcp.mux.com`, OAuth) has NO filesystem access — use it for management in chat (list/inspect assets, playback policies, analytics, signing keys), not for uploading local files.
 - Setup (user does it; never type their secrets into web fields): Mux Dashboard → Settings → Access Tokens → new token, environment = the one for courses, **Mux Video Read + Write** → save `{"tokenId","tokenSecret"}` to `~/.config/video-to-elearning/mux.json` (chmod 600) or env `MUX_TOKEN_ID/MUX_TOKEN_SECRET` → `v2e mux <dir> check`.
-- Ask the user for the playback policy: **signed** (default for paid courses — the LMS backend must mint JWTs with a Mux Signing Key) or **public**.
+- Playback policy has NO default: ask **signed** (paid courses — the LMS backend mints JWTs with a Mux Signing Key) or **public**, and record it in `edl.mux.policy` only after the user chooses.
+- Grouping (Mux has no folders): `meta.creator_id` = owner/tenant (e.g. `coachio`, partner id) · `meta.external_id` = `<group>:<CODE>` (group = course slug, `edl.mux.group`) · `passthrough` = `{g, cat, code, i}` where `cat` = part label. `v2e mux <dir> catalog` lists ALL assets in the environment grouped owner → group → category → `out/mux/catalog.md`.
 - `v2e mux <dir> upload --test --yes` (1 lesson) → user checks the dashboard → `v2e mux <dir> upload --yes`. Each asset gets `meta.title`, `meta.external_id = v2e:<CODE>`, optional `meta.creator_id` (tenant), and `passthrough` JSON {course, code, index} — use these for multi-tenant lookups.
 - Output `out/mux/state.json` + `links.md/csv`; `v2e deliver <dir> --host mux` makes Mux the primary video in `course.json` (both hosts are always listed under `lessons[].hosts`).
 - Mux has no custom-thumbnail upload: the LMS should use our approved PNG (`files.thumbnail`); `thumbnailUrl` is Mux's auto frame.
