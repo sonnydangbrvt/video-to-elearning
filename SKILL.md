@@ -84,6 +84,7 @@ The thumbnail is an HTML/React (Remotion) template — text is always rendered b
   - Pick the frame per lesson: extract 4 candidates per lesson (20/40/60/80 %), tile them, look, choose the most visual/representative one (3D model, result screen, finished app) → set `thumbFrameAt` (seconds). Avoid slides with lots of text, empty screens, login pages.
 - **Mode "AI background"**: see `docs/THUMBNAIL.md` (`v2e thumbs --prompts`, save to `brand/thumb-bg/<CODE>.png`).
 - `thumbTitle` ≤ 6 words with ONE highlighted keyword in `**…**`. Part labels short (pill must stay on one line).
+- **Campaign headline + mascot (optional, used for the Muse AI set):** `edl.brand.thumbHeadline` (e.g. `"LÀM CHỦ MÔ HÌNH\n**MUSE AI** MỚI"`, `\n` = line break, `**…**` = accent colour) is drawn big at the top-left of EVERY thumbnail; `edl.brand.thumbMascot` = a transparent PNG in `<project>/brand/` placed bottom-right over the device frame. Ask the user for the headline text and mascot image when they want a product/campaign look. Put the whole set in ONE approval message (overview sheet + 2 full-size) together with the sample video (Step 7) when the user asks to approve "once".
 - `v2e thumbs <dir>` → build an overview sheet (`ffmpeg … tile=4x7`) + send 2 full-size samples. **STOP and wait for approval.**
 
 ## 7. Sample lesson — GATE G4
@@ -99,6 +100,9 @@ Send the sample. **STOP and wait for approval** (unless the user explicitly pre-
 `v2e render <dir> --all` in background (resumable; finished lessons are skipped). Also exports `out/review-mistakes/` (`-BO` = dropped, `-GIU` = kept).
 Encoding defaults (fast + clean for screen recordings): H.264 `crf 23`, `preset medium`, AAC 128k, faststart. Override with `edl.crf` / `edl.preset`.
 Background: black letterbox is replaced by a macOS wallpaper (`edl.frame.background`, from `assets/frame/`); auto-crops the recording's own black borders first. NO window chrome (kept simple for speed).
+**Topic callouts (text on the left, on by default when `lessons[].callouts` exist):** each `{cue, at, title, sub, icon}` becomes a transparent PNG card (Remotion `Callout`, cached in `out/callouts/`) overlaid bottom-left for 4.6 s with fade + slide-in at the START of that cue (source time → output time via the segment map; callouts inside cut regions are skipped; never overlapping). Write 4–8 punchy callouts per lesson (title ≤ 5 words + one-line sub + emoji) from the PLAN topic map; use cue numbers, never hand-typed times. `edl.callouts=false` disables.
+**Background music bed:** `assets/music/bed.m4a` (calm, −29 LUFS, loops) mixed under the voice at `edl.bed.volume` dB (default −3), 3 s fade-in / 4 s fade-out; `edl.bed=false` disables. The intro thumbnail keeps its own upbeat music.
+**Merge rule:** two cuts closer than `rules.mergeGap` (6 s) are merged into one so there are never two transitions within a few seconds.
 Cut transitions: at every dropped segment the outgoing scene's audio fades down, video crossfades (`edl.transition`), and a whoosh SFX plays (`edl.sfx.cut`) so viewers feel the previous scene ended. Every cut is logged to `out/cut-log.md` / `.csv` with the lesson number, timestamp-in-video, removed source range, and reason — so the user can point to "video 12, cut at 07:23".
 
 ## 9. QA + delivery — GATE G5
@@ -172,7 +176,9 @@ The user points at things using `out/cut-log.md` (video number · time in video 
 
 **Intro = the APPROVED THUMBNAIL of that lesson** (`out/thumb/NN-CODE.png`), shown 4 s with fade in/out + shared intro music (`assets/music/intro-music.m4a`, −18 LUFS, fades) + intro whoosh, then concatenated to the lesson WITHOUT re-encoding (`-c copy`). Never use a separate/old intro template: the user approved the thumbnails, the video must open with exactly those (a stale Antigravity intro template once slipped through — never again). Render thumbnails BEFORE the batch. Same music for every video unless the user provides another (`edl.introMusic`).
 
-**Order the user wants:** PLAN → thumbnails (approve) → 1 sample video (approve) → batch render unattended (they often go to sleep — run to completion, then QA + export).
+**Order the user wants:** PLAN → thumbnails (approve) → 1 sample video (approve) → batch render unattended (they often go to sleep — run to completion, then QA + export). When they say "tell me once what needs my approval", send thumbnails + sample in ONE message and then wait; after their yes, run everything (batch, QA, export) without further questions.
+
+**Lesson order may differ from the recording order** (edl.lessons order = course order; only overlap is checked), e.g. put "Sign up" right after "What is X".
 
 **Technical pitfalls (already fixed — do not reintroduce):**
 - Never feed an infinite input (`-loop 1` image) to a filter graph unless the overlay uses `shortest=1` with the video as the finite stream; otherwise ffmpeg never stops.

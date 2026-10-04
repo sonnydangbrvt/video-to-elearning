@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0 — 2026-10-05
+Rút ra từ buổi "Muse AI" (3h31 → 14 bài, 2h18).
+- Thumbnail: dòng nhấn mạnh toàn bộ + mascot (`brand.thumbHeadline`, `brand.thumbMascot`); khung ảnh theo tỉ lệ thật, tự cắt viền đen khi lấy ảnh.
+- Chữ chủ đề bên trái video (`lessons[].callouts`, thẻ Remotion PNG) + nhạc nền nhẹ (`assets/music/bed.m4a`).
+- Luật gộp chỗ cắt gần nhau (`rules.mergeGap`).
+- Thứ tự bài theo khoá học (không bắt buộc theo thứ tự bản ghi); một lần duyệt gộp thumbnail + video mẫu.
+
 ## 1.0.0 — 2026-10-05
 Bản đóng gói đầu tiên, rút ra từ 6 buổi thực tế (cuối cùng: Vibe Code 3D, 4h02 → 26 video 2h53).
 
