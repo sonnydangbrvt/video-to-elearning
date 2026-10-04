@@ -58,7 +58,8 @@
           "sub": "Giọng đọc AI miễn phí, chạy trên máy",
           "icon": "🎙️"
         }
-      ]
+      ],
+      "inserts": []
     },
     {
       "code": "A4",
@@ -131,9 +132,5 @@
   "transition": {
     "type": "fade",
     "duration": 0.5
-  },
-  "bed": {
-    "file": "music/bed.m4a",
-    "volume": -3
   }
 }

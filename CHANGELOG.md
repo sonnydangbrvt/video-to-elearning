@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 — 2026-10-05
+- Chèn video ngoài thay cho một đoạn gốc (`lessons[].inserts`): chuyển cảnh hai đầu, nền mờ khi khác tỉ lệ, chuẩn âm lượng lời, chữ hướng dẫn theo từng bước (`callouts[].insert/offset`), ghi vào nhật ký cắt.
+- Nhạc nền dưới giọng giảng: **tắt mặc định** (chỉ nhạc ở đoạn thumbnail mở đầu).
+
 ## 1.1.0 — 2026-10-05
 Rút ra từ buổi "Muse AI" (3h31 → 14 bài, 2h18).
 - Thumbnail: dòng nhấn mạnh toàn bộ + mascot (`brand.thumbHeadline`, `brand.thumbMascot`); khung ảnh theo tỉ lệ thật, tự cắt viền đen khi lấy ảnh.
