@@ -1,13 +1,16 @@
 # Quy trình: Video dài (1–4h) → Bộ bài giảng E-learning
 
-Tổng hợp từ 5 lần làm thực tế: Buổi 1, Bunny+Supabase, Buổi 2, Buổi 3 (Bootcamp Vibe Code) và Workshop 13/08.
-Mỗi bước có lệnh `v2e` tương ứng. Có 3 cổng duyệt; không bước nào tốn thời gian được chạy trước khi duyệt.
+Tổng hợp từ 6 lần làm thực tế: Buổi 1, Bunny+Supabase, Buổi 2, Buổi 3 (Bootcamp Vibe Code), Workshop 13/08 và Workshop "Vibe Code 3D" 26/09 (26 bài, 2h53 từ 4h02).
+Mỗi bước có lệnh `v2e` tương ứng. Có 5 cổng duyệt; không bước nào tốn thời gian được chạy trước khi duyệt.
+(Hướng dẫn ngắn cho người dùng: [../HUONG-DAN.md](../HUONG-DAN.md).)
 
 ```
-init → prepare → clean-audio (chạy nền) → transcribe
+doctor ══CỔNG 0══ → init → prepare → clean-audio (chạy nền) → transcribe
      → PLAN.md ══DUYỆT 1══ → edl.json (+snap)
-     → render --sample ══DUYỆT 2══ → render --all
-     → thumbs → qa → export ══DUYỆT 3══
+     → [brand mới: 1 banner thử ══DUYỆT 2══] → thumbs ══DUYỆT 3══
+     → render --sample ══DUYỆT 4══ → render --all
+     → qa → export ══DUYỆT 5══
+     → (khi cần) youtube / mux → deliver
 ```
 
 ## Cấu trúc một dự án
@@ -89,21 +92,43 @@ Viết theo `templates/edl.example.json`. `--snap` dời ranh giới bài vào *
 
 `drops` (trong bài) + `mistakes[drop=true]` + `drops` toàn cục đều bị bỏ hẳn.
 
-## Bước 7 — `v2e render --sample` ══ DUYỆT 2 ══ → `--all`
+## Bước 7 — Thumbnail: `v2e thumbs` (làm TRƯỚC khi render video)
 
-Mỗi bài: `filter_complex` (split/trim/setpts/atempo/concat, hình từ nguồn, tiếng từ audio sạch) → scale+pad về 1920×1080, fps nguồn (tối đa 30)
-→ intro Remotion 4s → xfade 0.5s → `out/final/NN-MÃ-ten-bai.mp4` (H.264 crf 20, AAC 160k, faststart).
-`out/segmaps/` lưu bảng ánh xạ thời gian (dùng cho phụ đề). `out/review-mistakes/` chứa clip ±2s của từng đoạn lỗi.
+Xem [THUMBNAIL.md](THUMBNAIL.md). Thumbnail đã duyệt chính là **đoạn mở đầu** của từng video, nên phải xong trước khi render.
+Brand mới → hỏi logo + 3 màu + kicker → 1 banner thử → duyệt (tạo file `brand/APPROVED`) → mới làm cả bộ.
 
-## Bước 8 — Thumbnail: `v2e thumbs`
+## Bước 8 — Bài mẫu rồi mới hàng loạt: `v2e render --sample` ══ DUYỆT 4 ══ → `--all`
 
-Xem [THUMBNAIL.md](THUMBNAIL.md).
+Mỗi bài:
+- **Hình** từ video gốc, **tiếng** từ `audio-clean.m4a`; tự dò & cắt viền đen có sẵn của bản ghi (`detectCrop`).
+- **Bố cục A+C:** nội dung ≈16:9 lấp đầy 1920×1080; tỉ lệ khác (4:3…) đặt giữa trên hình nền macOS thay cho viền đen. Không làm khung cửa sổ/mockup (chậm, chữ nhỏ).
+- **Chuyển cảnh ở mọi chỗ cắt:** tiếng cảnh trước giảm dần (~0.8s) → hình mờ chuyển (`edl.transition`) → whoosh (`assets/sfx/cut-woosh.wav`) → cảnh sau vào. Chỗ cắt luôn bắt đầu SỚM hơn một chút và kết thúc MUỘN hơn một chút, vào khoảng dừng.
+- **Mở đầu = thumbnail đã duyệt** (4s, mờ vào/ra, nhạc `assets/music/intro-music.m4a` + whoosh), nối với phần bài bằng `-c copy` (không mã hoá lại).
+- Mã hoá H.264 `crf 23`, preset `medium`, AAC 128k, faststart → ≈2 phút cho bài 8 phút, ≈1 GB cho bộ 2h53.
+- Ghi **nhật ký chuyển cảnh** `out/cut-log.md/.csv`: số thứ tự video, thời điểm trong video, đoạn gốc đã bỏ, lý do — để người duyệt chỉ đúng chỗ ("video 12, chỗ cắt 07:23").
+- `out/segmaps/` lưu bảng ánh xạ thời gian (dùng cho phụ đề). `out/review-mistakes/` chứa clip ±2s của từng đoạn lỗi (`-BO` đang cắt, `-GIU` đang giữ).
+- Chỉ đổi thumbnail/nhạc mở đầu: `v2e render --only X --force --reassemble` (dùng lại phần bài, dưới 1 giây/bài).
 
-## Bước 9 — `v2e qa` + `v2e export` ══ DUYỆT 3 ══
+## Bước 9 — `v2e qa` + `v2e export` ══ DUYỆT 5 ══
 
-QA tự động: thời lượng khớp EDL ±2s · −16±1.5 LUFS · đỉnh ≤ −0.5 dBFS · lệch A/V < 0.15s · khung đen · đứng hình ≥20s (chỉ cảnh báo) · lỗi giải mã.
-Người duyệt xem thêm: 10s đầu mỗi bài, 3 điểm cắt ngẫu nhiên, toàn bộ `review-mistakes/`.
-Export: `curriculum.json/.csv` (thứ tự, phần, mã, tên, mô tả, thời lượng, file video/thumbnail/phụ đề) + `captions/*.srt` đã tính lại thời gian theo video sau cắt.
+QA tự động: thời lượng khớp EDL ±2s · −16±1.5 LUFS · đỉnh ≤ −0.5 dBFS · lệch A/V < 0.15s · khung đen ở vùng giữa ≥3s · đứng hình ≥60s (chỉ cảnh báo, slide có lời giảng là bình thường) · lỗi giải mã.
+Người duyệt xem thêm: 10s đầu mỗi bài (phải là thumbnail), 3 điểm cắt ngẫu nhiên, `cut-log.md`, toàn bộ `review-mistakes/`.
+Export: `curriculum.json/.csv` + `captions/*.srt` đã tính lại thời gian theo video sau cắt (kể cả đoạn chồng lên nhau lúc chuyển cảnh).
+
+## Bước 10 — Hậu kỳ (chỉ khi người dùng yêu cầu)
+
+`v2e youtube` / `v2e mux` đăng lên host video (luôn có cổng xác nhận trước MỖI đợt: quyền riêng tư, chủ sở hữu, khoá, danh sách video) → `v2e deliver` gom thành `out/delivery/course.json` + `course.md` + `lessons.csv` cho website e-learning.
+Chi tiết, giới hạn thực tế của YouTube/Mux: xem [SKILL.md](../SKILL.md) mục 10–11.
+
+## Sửa sau khi bàn giao
+
+| Muốn | Làm |
+|---|---|
+| Giữ lại một đoạn đã cắt / đổi chỗ cắt | đổi `mistakes[].drop` hoặc `drops` trong `edl.json` → `v2e edl --snap` → `v2e render --only X --force` |
+| Đổi tên bài / thumbnail | sửa `title`/`thumbTitle`/`thumbFrameAt` → `v2e thumbs --only X --force` → `render --only X --force --reassemble` |
+| Đổi điểm bắt đầu/kết thúc bài | sửa `start`/`end` → `edl --snap` → `render --only X --force` |
+| Đổi nhạc mở đầu | `edl.introMusic` → `render --all --force --reassemble` |
+| Sau khi sửa | chạy lại `qa` và `export` (cập nhật phụ đề + nhật ký cắt); bài đã đăng lên host phải đăng lại |
 
 ## Bài học từ các lần trước
 
@@ -113,5 +138,11 @@ Export: `curriculum.json/.csv` (thứ tự, phần, mã, tên, mô tả, thời 
 | ~19' Whisper ảo giác ("subscribe lalaschool") ở Buổi 1 | VAD + tự gắn cờ ảo giác + tua/cắt theo âm thanh thật |
 | Mốc làm tròn đến giây, có chỗ cụt chữ | mili-giây + snap vào chỗ ngắt hơi + chừa 0.15/0.25s |
 | Không khử ồn, âm lượng giữa các bài chênh nhau | clean-audio + loudnorm −16 LUFS + QA đo lại |
-| Thumbnail = frame chụp từ intro | composition thumbnail riêng + nền AI theo prompt chuẩn |
-| Không có file bàn giao | curriculum.json/.csv + phụ đề từng bài |
+| Thumbnail = frame chụp từ intro | composition thumbnail riêng (ảnh chụp thật hoặc nền AI) |
+| Không có file bàn giao | curriculum.json/.csv + phụ đề từng bài + course.json cho website |
+| Chỗ cắt nghe/nhìn đột ngột, khó hiểu | chuyển cảnh mờ + giảm tiếng + whoosh + cắt vào khoảng dừng |
+| Khó chỉ cho AI đúng chỗ cần sửa | nhật ký `cut-log.md` (số video + thời điểm + lý do) |
+| Video mở đầu bằng intro cũ, không phải thumbnail đã duyệt | mở đầu = đúng thumbnail của bài, thumbnail làm trước khi render |
+| Màn hình đen kéo dài đầu bài (người nói chưa chia sẻ màn hình) | dò độ sáng vùng giữa, dời điểm bắt đầu bài |
+| Viền đen quanh video | tự dò & cắt viền, 4:3 đặt trên nền macOS |
+| Phiên bản/SFX không đi theo repo → mất whoosh khi sang máy khác | SFX + nhạc + hình nền nằm trong `assets/` |

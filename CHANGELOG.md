@@ -1,0 +1,14 @@
+# Changelog
+
+## 1.0.0 — 2026-10-05
+Bản đóng gói đầu tiên, rút ra từ 6 buổi thực tế (cuối cùng: Vibe Code 3D, 4h02 → 26 video 2h53).
+
+- Quy trình đủ vòng: doctor → init → prepare → clean-audio → transcribe → PLAN → edl → thumbs → render → qa → export → (youtube/mux) → deliver, với 5 cổng duyệt.
+- Cắt theo khoảng lặng đo từ âm thanh; chỗ cắt dời vào khoảng dừng; tua 2× / cắt khoảng chết.
+- Chuyển cảnh ở mọi chỗ cắt (giảm tiếng, mờ hình, whoosh) + nhật ký `cut-log.md/.csv` (số video, thời điểm, lý do).
+- Bố cục A+C: tự cắt viền đen của bản ghi; 16:9 lấp đầy, 4:3 trên nền macOS.
+- Mở đầu mỗi video = thumbnail đã duyệt + nhạc + whoosh; nối `-c copy`; `--reassemble` đổi nhanh.
+- Thumbnail HTML/Remotion (ảnh chụp thật trong khung nghiêng, hoặc nền AI theo prompt chuẩn), cổng duyệt brand mới.
+- Khử ồn + chuẩn −16 LUFS; QA tự động (thời lượng, âm lượng, A/V, đen vùng giữa).
+- Hậu kỳ: YouTube, Mux, `deliver` → `course.json` cho website e-learning.
+- Đóng gói: SFX/nhạc/hình nền đi kèm `assets/`; hướng dẫn người dùng `HUONG-DAN.md`.

@@ -6,7 +6,7 @@ description: Biến video dài 1–4 giờ (Zoom/workshop/livestream/screencast)
 # video-to-elearning
 
 CLI: `node ~/.claude/skills/video-to-elearning/bin/v2e.mjs <command>` (written `v2e` below).
-Full process + rationale: [docs/QUY-TRINH.md](docs/QUY-TRINH.md). Thumbnails: [docs/THUMBNAIL.md](docs/THUMBNAIL.md).
+User-facing guide: [HUONG-DAN.md](HUONG-DAN.md). Full process + rationale: [docs/QUY-TRINH.md](docs/QUY-TRINH.md). Thumbnails: [docs/THUMBNAIL.md](docs/THUMBNAIL.md).
 Talk to the user in Vietnamese. The rules below are in English on purpose — follow them exactly.
 
 ## ⛔ NON-NEGOTIABLE GATES — read before doing anything
@@ -147,9 +147,20 @@ The final result of post-production is ONE machine-readable file an agent can pu
 
 Quota (2026): videos.insert has its own bucket of 100 uploads/day; thumbnails.set 50, playlistItems.insert 50, playlists.insert 50 from the 10,000 units/day pool.
 
+## 12. Revisions after delivery (the user will say "video 12, cut at 07:23 …")
+
+The user points at things using `out/cut-log.md` (video number · time in video · removed source range · reason) and `out/review-mistakes/`. Translate and re-render ONLY the affected lessons:
+- **Keep a dropped segment / move a cut:** set that `mistakes[].drop = false` (or edit `drops`) → `v2e edl <dir> --snap` → `v2e render <dir> --only CODE --force`.
+- **Time given "in the video" → source time:** look it up in `out/segmaps/CODE.json` (`contentOffset` + each segment's `out`, `s`, `e`, `sp`); never guess.
+- **Title / thumbnail frame:** edit `title`, `thumbTitle`, `thumbFrameAt` → `v2e thumbs <dir> --only CODE --force` → `v2e render <dir> --only CODE --force --reassemble` (body is reused).
+- **Start/end of a lesson:** edit `start`/`end` (re-check the black-screen rule) → `edl --snap` → `render --only CODE --force`.
+- **Intro music / background / transitions:** `edl.introMusic`, `edl.frame.background`, `edl.transition` → `render --all --force` (add `--reassemble` when only intro music/thumbnail changed).
+- After ANY revision: re-run `v2e qa`, `v2e export` (captions + cut log are regenerated), then report which videos changed. Lessons already uploaded to a host must be re-uploaded — tell the user and ask before doing it (batch gate applies).
+- Never touch lessons the user did not mention.
+
 ## Lessons learned (from real production — follow them)
 
-**Speed first.** The user values fast production. Skip anything slow that is not clearly needed. Preview layout/look decisions with STILL IMAGES (Remotion `Scene` still, `ffmpeg -frames:v 1`) before rendering any video.
+**Speed first.** The user values fast production. Skip anything slow that is not clearly needed. Preview layout/look decisions with STILL IMAGES (a single frame composited with `ffmpeg -frames:v 1`, or `v2e thumbs`) before rendering any video.
 
 **Layout = "A + C" (default, approved):**
 - Auto-detect and crop the recording's own black borders per lesson (`detectCrop`, union of 10 samples → never cuts content).
