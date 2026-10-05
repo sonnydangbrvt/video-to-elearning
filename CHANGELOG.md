@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.2.1 — 2026-10-05
+- Bộ giới hạn đỉnh cuối (−1.5 dBFS) cho mọi bài, chống méo tiếng khi mã hoá.
 - Video chèn: giữ nhạc nền gốc của clip ở đoạn không lời (`musicLufs`, mặc định −24 LUFS) thay vì tắt tiếng; QA nới ngưỡng cho bài có nhạc chèn.
 
 ## 1.2.0 — 2026-10-05
