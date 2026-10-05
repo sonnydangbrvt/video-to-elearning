@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.1 — 2026-10-05
+- Video chèn: giữ nhạc nền gốc của clip ở đoạn không lời (`musicLufs`, mặc định −24 LUFS) thay vì tắt tiếng; QA nới ngưỡng cho bài có nhạc chèn.
+
 ## 1.2.0 — 2026-10-05
 - Chèn video ngoài thay cho một đoạn gốc (`lessons[].inserts`): chuyển cảnh hai đầu, nền mờ khi khác tỉ lệ, chuẩn âm lượng lời, chữ hướng dẫn theo từng bước (`callouts[].insert/offset`), ghi vào nhật ký cắt.
 - Nhạc nền dưới giọng giảng: **tắt mặc định** (chỉ nhạc ở đoạn thumbnail mở đầu).
