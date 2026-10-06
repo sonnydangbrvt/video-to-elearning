@@ -9,6 +9,7 @@ if [[ -e "$SKILLS/video-to-elearning" && ! -L "$SKILLS/video-to-elearning" ]]; t
   exit 1
 fi
 ln -sfn "$DIR" "$SKILLS/video-to-elearning"
+ln -sfn "$DIR/skills/mux-publisher" "$SKILLS/mux-publisher"   # skill phụ: đẩy video lên Mux + thư mục bàn giao
 echo "✔ Skill đã liên kết: $SKILLS/video-to-elearning → $DIR"
 
 # doctor tự hỏi [y/N] trước khi cài/tải

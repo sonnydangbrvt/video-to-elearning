@@ -133,6 +133,9 @@ Before EVERY upload batch (any host, even a single test video) show the user and
 
 ### 10b. Mux (recommended host for paid courses / white-label)
 
+> For a full Mux delivery (registry of IDs/sessions, MP4 links, standard per-lesson export folder) use the companion skill **mux-publisher** (`skills/mux-publisher`, `mux-pub init <project> --from-v2e` → `plan` → `upload` → `mp4` → `export`). The `v2e mux` commands below remain for quick uploads.
+
+
 - **Batch upload from disk = `v2e mux`** (Direct Upload API). The official Mux MCP server (`https://mcp.mux.com`, OAuth) has NO filesystem access — use it for management in chat (list/inspect assets, playback policies, analytics, signing keys), not for uploading local files.
 - Setup (user does it; never type their secrets into web fields): Mux Dashboard → Settings → Access Tokens → new token, environment = the one for courses, **Mux Video Read + Write** → save `{"tokenId","tokenSecret"}` to `~/.config/video-to-elearning/mux.json` (chmod 600) or env `MUX_TOKEN_ID/MUX_TOKEN_SECRET` → `v2e mux <dir> check`.
 - Playback policy has NO default: ask **signed** (paid courses — the LMS backend mints JWTs with a Mux Signing Key) or **public**, and record it in `edl.mux.policy` only after the user chooses.
