@@ -15,6 +15,7 @@ Talk to the user in Vietnamese. The rules below are in English on purpose — fo
 3. **Never do billing.** Free plan = max 10 assets → tell the user to upgrade in Dashboard → Billing, then resume (uploads are resumable; done videos are skipped).
 4. **Always test 1 video first** (`upload --test --yes`), let the user check the player link, then confirm the rest.
 5. **Never delete Mux assets** unless the user explicitly asks for that specific asset.
+6. **Never change anything on Mux the user did not explicitly ask for.** `upload`, `mp4` (adds paid storage to EXISTING assets) and any other write call each need their own explicit request + yes. Creating/updating this skill is NOT a request to run it on real data. When asked to "export" or "get links", use only local/read-only commands (`adopt`, `export`, `find`) — if MP4 links are missing, report them as missing and ASK; never enable MP4 on your own.
 
 ## Workflow
 
