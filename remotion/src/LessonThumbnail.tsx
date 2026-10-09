@@ -89,7 +89,7 @@ export const LessonThumbnail: React.FC<LessonThumbnailProps> = ({ buoi, part, le
   const pillText = [buoi, part].filter(Boolean).join(" · ");
   return (
     <AbsoluteFill style={{ backgroundColor: "#f4f5f7", fontFamily }}>
-      {screenshot ? <ScreenshotStage screenshot={screenshot} ink={ink} orange={orange} blue={blue} compact={hasHead && !!mascot} /> : <Img src={staticFile(background)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+      {screenshot ? <ScreenshotStage screenshot={screenshot} ink={ink} orange={orange} blue={blue} compact={hasHead} /> : <Img src={staticFile(background)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
       {/* làm dịu nửa trái để chữ luôn đọc được, kể cả khi ảnh AI lấn sang trái */}
       <div style={{ position: "absolute", left: 0, right: 0, top: "22%", bottom: 0, background: "linear-gradient(90deg, rgba(244,245,247,0.9) 0%, rgba(244,245,247,0.7) 34%, rgba(244,245,247,0) 44%)" }} />
       {logo && <Img src={staticFile(logo)} style={{ position: "absolute", left: 34, top: 26, height: 70 }} />}

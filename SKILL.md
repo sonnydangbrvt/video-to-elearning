@@ -184,6 +184,15 @@ The user points at things using `out/cut-log.md` (video number · time in video 
 
 **Lesson order may differ from the recording order** (edl.lessons order = course order; only overlap is checked), e.g. put "Sign up" right after "What is X".
 
+**Second recording of the same topic (workshop "lần 2"/supplement) — rules from real use:**
+- Diff against the earlier PLAN: keep ONLY content that is NEW or UPDATED; cut anything identical to the earlier set (map each cut range to the earlier lesson code in the PLAN, section "Đoạn TRÙNG"). Never re-publish the same lesson twice.
+- Keep ONLY content that belongs to the course topic (e.g. 3D game). Off-topic demos, tool ads, sales, Muse/other products → cut, do NOT make Bonus lessons unless the user asks.
+- Naming: merge new lessons into the EARLIER part structure with a ".1" suffix — `parts: {"A.1": "PHẦN A.1 · …"}`, lesson codes `A.1.1`, `C.1.2` … (thumbnail pill shows "PHẦN A.1 · Tư duy 3D", chip "Bài A.1.1"). Keep part labels SHORT so the pill stays on one line (≤ ~25 chars after the part code).
+- A sub-project that continues into an "advanced" course (e.g. the vocabulary game that later gets a database) = its own part `V` with `thumbKicker` "NÂNG CAO · DATABASE"; render it in the same project but report it as a separate series and copy it to `out/<series>/`.
+- Loudness must match the earlier set: same preset (`standard`), −16 LUFS target; compare `ebur128` of a new lesson vs 2–3 old finals (±0.5 LU is fine). Different recording days → only normalise/optimise, never EQ-match, never add music under speech.
+- Transcript sources: Zoom VTT, **YouTube `.sbv`** (auto captions; supported, strip `[hắng giọng]`), or local Whisper (+VAD). A YouTube-downloaded video is 720p: fine for planning/rendering, but ask the user for the original Zoom MP4 for the final if available.
+- Verify the file is the RIGHT recording before analysing: grep the transcript for the topic's key terms (Tripo, GLB, rig…) and read the first cue; the user once sent the wrong session (a different bootcamp day) and the mismatch was caught by keyword counts.
+
 **Technical pitfalls (already fixed — do not reintroduce):**
 - Never feed an infinite input (`-loop 1` image) to a filter graph unless the overlay uses `shortest=1` with the video as the finite stream; otherwise ffmpeg never stops.
 - Measure loudness with `ebur128=peak=true:framelog=quiet` (fast). Never measure long audio with `loudnorm` (it resamples to 192 kHz — minutes per hour of audio) and never let ebur128 print per-frame logs (overflows buffers).
