@@ -14,6 +14,7 @@ import { transcribe } from "../lib/transcribe.mjs";
 import { youtube } from "../lib/youtube.mjs";
 import { deliver } from "../lib/deliver.mjs";
 import { mux } from "../lib/mux.mjs";
+import { leak } from "../lib/leak.mjs";
 import { STATE, parseArgs, project, readJSON } from "../lib/util.mjs";
 
 const HELP = `
@@ -29,6 +30,7 @@ v2e — Video dài → bộ bài giảng E-learning
   render <dir> --sample [MÃ] | --only A1,A2 | --all | --mistakes  [--no-intro] [--force]
   thumbs <dir> [--prompts] [--only A1]        Thumbnail; --prompts = câu lệnh tạo ảnh nền + ảnh ref
   qa <dir> [--only A1]                        Kiểm tra chất lượng file final
+  leak <dir> --terms "a,b" [--only A1] [--fps 0.5]  Quét OCR video final tìm chữ nhạy cảm (mật khẩu, tên đăng nhập…)
   export <dir>                                curriculum.json/.csv + phụ đề .srt từng bài
   youtube <dir> auth|plan|upload|links        Đăng lên YouTube (plan → duyệt → upload --test --yes → upload --yes)
   mux <dir> check|upload|links                Đăng lên Mux (Direct Upload; --policy signed|public)
@@ -63,7 +65,7 @@ function status(args) {
   console.log(next ? `\n ▶ Bước tiếp: ${next}\n` : "\n 🎉 Hoàn tất.\n");
 }
 
-const CMDS = { doctor, init, prepare, transcribe, edl: edlCheck, "clean-audio": cleanAudio, render, thumbs, qa, export: exportAll, youtube, mux, deliver, status };
+const CMDS = { doctor, init, prepare, transcribe, edl: edlCheck, "clean-audio": cleanAudio, render, thumbs, qa, leak, export: exportAll, youtube, mux, deliver, status };
 
 const [cmd, ...rest] = process.argv.slice(2);
 if (!cmd || cmd === "help" || cmd === "--help" || !CMDS[cmd]) {

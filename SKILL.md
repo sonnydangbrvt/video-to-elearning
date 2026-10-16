@@ -209,6 +209,17 @@ The user points at things using `out/cut-log.md` (video number · time in video 
 - QA "freeze ≥60 s" warnings on slides/static screens with speech are normal — only investigate black frames, loudness, A/V sync, duration mismatches.
 - In zsh, `$var:foo` triggers modifiers — use `${var}` inside filter strings. A glob with no match (`rm out/*.part.mp4`) aborts the WHOLE command — use `find … -delete`.
 
+## Sensitive information on screen (added 1.3.0) — GATE G5 includes this
+
+Cutting the moment a credential is pasted is NOT enough: the chat/notes window that holds it reappears in other kept parts (scrolling, switching windows, a sliver behind the dock).
+1. In PLAN.md list every sensitive string seen or heard (usernames, passwords, API keys, tokens).
+2. After the batch render run `v2e leak <dir> --terms "user,part-of-password"` (OCR at 0.5 fps; needs `brew install tesseract`). Also set `edl.leakTerms` to make it default.
+3. Any ❌ → find the cue(s) at that time (`out/segmaps/<CODE>.json`), cut the WHOLE cue(s) (no mid-sentence cuts), re-render the lesson, re-run `v2e leak`. Repeat until ✅.
+4. Never declare a lesson with credentials "done" before a clean leak report. Tell the user to revoke any credential that appeared in the raw recording.
+5. Cutting leaves short islands (<10 s) between two cuts that sound choppy: cut the island too.
+
+**Thumbnail/intro consistency:** `thumbFrameAt` is recomputed when a lesson's kept ranges change. Re-run `v2e thumbs` AFTER the ranges are final and BEFORE the sample/batch, otherwise the intro (the approved thumbnail) can disagree with `out/thumb/*.png`. Weak frames (dark/empty) → choose `thumbFrameAt` by brightness + edge detail.
+
 ## Hard rules (repeat — do not violate)
 
 - NEVER modify/delete anything in `input/` or the original video.

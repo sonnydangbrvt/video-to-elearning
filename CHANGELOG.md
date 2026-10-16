@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 — 2026-10-16
+Rút ra từ buổi "K3 Bootcamp – Buổi 1" (3h20 → 22 bài, 2h47).
+- **`v2e leak`**: quét OCR video thành phẩm tìm chữ nhạy cảm (mật khẩu, tên đăng nhập). Cắt đúng lúc dán mật khẩu là chưa đủ — cửa sổ chat hiện lại ở các đoạn khác; bước quét này là một phần của cổng nghiệm thu.
+- Thumbnail: bố cục gọn dùng được khi có headline mà không có mascot (`brand.thumbMascot` tuỳ chọn); tên giảng viên dùng `brand.thumbKicker`.
+- Bài học quy trình: đổi khoảng cắt thì khung thumbnail tự đổi → dựng lại thumbnail rồi mới render bài; chọn khung thumbnail theo độ sáng và chi tiết khi khung giữa bài tối/trống.
+- Tài liệu: sơ đồ `docs/flow.svg`, `docs/FLOW.md`, README có sơ đồ.
+- Skill `mux-publisher` nằm trong repo (`skills/mux-publisher`).
+
 ## 1.2.1 — 2026-10-05
 - Bộ giới hạn đỉnh cuối (−1.5 dBFS) cho mọi bài, chống méo tiếng khi mã hoá.
 - Video chèn: giữ nhạc nền gốc của clip ở đoạn không lời (`musicLufs`, mặc định −24 LUFS) thay vì tắt tiếng; QA nới ngưỡng cho bài có nhạc chèn.

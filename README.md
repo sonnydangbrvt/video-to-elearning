@@ -10,6 +10,25 @@ Dùng như **Claude Code skill** (Claude điều phối, bạn chỉ duyệt) ho
 
 ![thumbnail mẫu](assets/thumbnail/sample-thumbnail.png)
 
+## Quy trình tổng quan
+
+![Quy trình video-to-elearning](docs/flow.svg)
+
+Chi tiết từng bước, đầu vào/đầu ra và các cổng duyệt: **[docs/FLOW.md](docs/FLOW.md)**.
+
+```mermaid
+flowchart LR
+  A[Video + VTT] --> B[prepare · transcribe · clean-audio]
+  B --> C{{G1 PLAN.md}}
+  C --> D[edl.json --snap]
+  D --> E{{G2/G3 Brand · Thumbnail}}
+  E --> F{{G4 Bài mẫu}}
+  F --> G[Render hàng loạt]
+  G --> H{{G5 QA · leak · export}}
+  H --> I[Mux / YouTube]
+  I --> J[deliver: course.json + embed]
+```
+
 ## Cài đặt
 
 ```bash
@@ -51,6 +70,7 @@ node $V thumbs ~/Zoom/v2e-buoi4 [--prompts]              # thumbnail (BẠN DUY�
 node $V render ~/Zoom/v2e-buoi4 --sample [MÃ]            # bài mẫu (BẠN DUYỆT)
 node $V render ~/Zoom/v2e-buoi4 --all                    # hàng loạt (--only A1,A2 · --force · --reassemble)
 node $V qa ~/Zoom/v2e-buoi4                              # kiểm tra chất lượng
+node $V leak ~/Zoom/v2e-buoi4 --terms "tên_đăng_nhập,đoạn_mật_khẩu"   # quét OCR video final tìm chữ nhạy cảm
 node $V export ~/Zoom/v2e-buoi4                          # curriculum + phụ đề
 node $V youtube|mux ~/Zoom/v2e-buoi4 …                   # (tuỳ chọn) đăng host video — luôn có cổng xác nhận
 node $V deliver ~/Zoom/v2e-buoi4                         # (tuỳ chọn) gói course.json cho website e-learning
@@ -63,7 +83,7 @@ node $V status ~/Zoom/v2e-buoi4                          # đang ở bước nà
 HUONG-DAN.md             hướng dẫn cho người dùng (bắt đầu từ đây)
 SKILL.md                 chỉ dẫn cho Claude: cổng duyệt, từng bước, bài học rút ra, hậu kỳ (entry của skill)
 bin/v2e.mjs              CLI
-lib/                     doctor, prepare, transcribe, audio, edl, frame, render, thumbs, qa, export, youtube, mux, deliver
+lib/                     doctor, prepare, transcribe, audio, edl, frame, render, thumbs, qa, leak, export, youtube, mux, deliver
 remotion/                LessonThumbnail (thumbnail) + LessonIntro (dự phòng khi chưa có thumbnail)
 assets/brand/            logo.png, thumb-bg-default.png, intro-bg.png (Coachio) — thay để đổi thương hiệu
 assets/music/            intro-music.m4a — nhạc mở đầu dùng chung
@@ -72,8 +92,11 @@ assets/frame/            hình nền macOS thay viền đen (wallpaper-purple, w
 assets/thumbnail/        PROMPT-TEMPLATE.md (prompt tạo nền AI + ảnh ref), examples/, sample-thumbnail.png
 templates/               brief, PLAN, edl.example.json, glossary.json (thuật ngữ Zoom nghe nhầm)
 scripts/                 youtube-autoretry.sh
-docs/                    QUY-TRINH.md (kỹ thuật chi tiết), THUMBNAIL.md
+skills/mux-publisher/    skill thứ hai: đẩy lên Mux, sổ đăng ký ID, thư mục bàn giao + embed
+docs/                    FLOW.md (sơ đồ + cổng duyệt), flow.svg, QUY-TRINH.md (kỹ thuật chi tiết), THUMBNAIL.md
 CHANGELOG.md · VERSION
 ```
 
-Chỉ hỗ trợ macOS (Homebrew, Spotlight). Không cần Python.
+Chỉ hỗ trợ macOS (Homebrew, Spotlight). Không cần Python. Quét lộ thông tin (`v2e leak`) cần `brew install tesseract`.
+
+> ⚠️ Repo chứa logo/nhạc/hình nền của Coachio trong `assets/` — để **private**, hoặc thay bằng tài sản của bạn trước khi công khai.
